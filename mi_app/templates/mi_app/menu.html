@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+{% load static %}
+{% load menu_filters %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Panel de Administración{% endblock %}</title>
+   
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+
+  
+</head>
+<style>
+.dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-btn .active-module .active-submenu {
+    padding: 8px;
+    /*text-decoration: none;*/
+    display: block;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    border: none;
+   /* background: none;*/
+    outline: none;
+
+    font-weight: bold;
+    background-color: rgba(0, 120, 215, 0.1);
+    border-left: 3px solid #0078d7;
+     transition: all 0.3s ease;
+}
+
+.dropdown-content {
+    height: 0;
+    min-width: 160px;
+    padding-left: 15px;
+    overflow: hidden;
+  transition: height 0.3s ease, opacity 0.3s ease; /* Más rápido */
+    opacity: 0;
+     
+}
+
+.dropdown-content.show {
+    height: auto;
+    max-height: 200px;
+    opacity: 1;
+     display: block; /* Importante para mantener el estado */
+}
+.active-submenu {
+    font-weight: 500 !important;
+   font-weight: bold !important;
+    color: #783CBC !important;
+    background-color: #2DC9D1;
+    border-left: 2px solid #783CBC;
+    padding-left: 13px !important; /* Compensa el borde */
+     margin-left: -2px; /* Compensación visual */
+}
+.arrow {
+    font-size: 0.8em;
+    margin-left: 8px;
+    display: inline-block;
+    transition: transform 0.5s ease ;
+}
+
+.arrow.rotated {
+    transform: rotate(180deg);
+     transition: transform 0.1s ease;
+   
+}
+
+.dropdown-btn:hover {
+    background-color: #2DC9D1 !important;
+}
+ 
+.user-info {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 14px;
+    color:rgb(242, 244, 245);
+    text-transform: uppercase; /* ✅ Asegura que siempre esté en mayúsculas */
+  
+}
+
+</style>    
+
+
+<body>
+    <div class="header">
+        {% load static %}
+        <img src="{% static 'logo.png' %}" alt="Logo">
+
+        <label>Sistema de Gestion Grandes Clientes</label>
+        <!-- ✅ Mostrar el nombre del usuario autenticado -->
+    <div class="user-info">
+        <strong>Bienvenido, {{ request.user.username }}</strong>
+    </div>
+    </div>
+    <div class="content">
+
+ 
+<div class="sidebar">
+  <h2>Menú</h2>
+  
+{% with grupo=request.user.opciones_menu.all|get_menu:"Ventas y Segmentos" %}
+  {% if grupo %}
+    <div class="dropdown">
+      <a href="#" class="dropdown-btn" onclick="toggleDropdown(event, 'client_solicitud')">
+        {{ grupo.nombre }} <span class="arrow">▼</span>
+      </a>
+      <div class="dropdown-content" id="client_solicitud-dropdown">
+        {% for item in request.user|submenus_para:grupo %}
+            <!--<pre>{{ item.url }}</pre> --><!--genera un alert-->
+  {% with item.url|ruta_django as item_url %}
+    {% if item_url %}
+      <a href="{{ item_url }}" class="{% if item_url in request.path %}active-submenu{% endif %}">
+        {{ item.nombre }}
+      </a>
+    {% else %}
+      <span style="color:gray;">⚠ {{ item.nombre }} (URL inválida)</span>
+    {% endif %}
+  {% endwith %}
+{% endfor %}
+
+      </div>
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+</div>
+
+   <div class="module">
+    
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    
+  
+
+ const MODULE_PATHS = {
+    client_solicitud: ["/clientes", "/solicitudes"]
+};
+
+    // Verificamos qué módulo debe estar activo
+    checkActiveModules(MODULE_PATHS); // Pasamos la configuración como parámetro
+    
+    // Cargamos el estado guardado (qué dropdown estaba abierto)
+    loadSavedState();
+});
+
+// 2. FUNCIÓN MEJORADA PARA VERIFICAR MÓDULOS ACTIVOS
+function checkActiveModules(moduleConfig) {
+    const currentPath = window.location.pathname;
+    
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        const content = dropdown.querySelector('.dropdown-content');
+        const moduleId = content.id.replace('-dropdown', '');
+        const isActive = moduleConfig[moduleId]?.includes(currentPath);
+        
+        if(isActive) {
+            dropdown.classList.add('active-module');
+            content.classList.add('show');
+            dropdown.querySelector('.arrow').classList.add('rotated');
+        }
+    });
+}
+
+// 3. FUNCIÓN SEPARADA PARA CARGAR ESTADO GUARDADO
+function loadSavedState() {
+    const savedModule = localStorage.getItem('activeDropdown');
+    if(savedModule) {
+        const dropdownContent = document.getElementById(`${savedModule}-dropdown`);
+        if(dropdownContent) {
+            dropdownContent.classList.add('show');
+            dropdownContent.previousElementSibling.querySelector('.arrow').classList.add('rotated');
+        }
+    }
+}
+
+// 4. FUNCIÓN MEJORADA PARA TOGGLE DROPDOWN
+function toggleDropdown(event, moduleId) {
+    event.preventDefault();
+    const button = event.currentTarget;
+    const content = document.getElementById(`${moduleId}-dropdown`);
+    const arrow = button.querySelector('.arrow');
+
+    // Alternar visibilidad
+    content.classList.toggle('show');
+    arrow.classList.toggle('rotated');
+
+    // Guardar estado (solo si está abierto)
+    localStorage.setItem('activeDropdown', content.classList.contains('show') ? moduleId : '');
+
+    // Cerrar otros dropdowns (mejorado)
+    closeOtherDropdowns(content);
+}
+
+// 5. FUNCIÓN AUXILIAR PARA CERRAR OTROS DROPDOWNS
+function closeOtherDropdowns(currentContent) {
+    document.querySelectorAll('.dropdown-content').forEach(content => {
+        if(content !== currentContent && content.classList.contains('show')) {
+            content.classList.remove('show');
+            content.previousElementSibling.querySelector('.arrow').classList.remove('rotated');
+        }
+    });
+}
+</script>    
+</html>

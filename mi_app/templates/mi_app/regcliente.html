@@ -1,0 +1,573 @@
+
+{% extends "mi_app/menu.html" %}
+{% load static %}
+
+{% block title %}Movilnet Pymes{% endblock %}
+
+{% block content %}
+
+{% if codcli %}
+  <h3 class="label">
+    Cliente <span style="color: #783CBC;">{{ codcli }}</span>
+  </h3>
+{% else %}
+  <h3 class="label">
+    Registro de Clientes
+  </h3>
+{% endif %}
+
+<div class="progress-container">
+<input type="hidden" name="hdd_paso" id="hdd_paso" value="{{ paso_actual }}">
+
+    <div class="progress-step active" id="step1">Información General</div>
+    <div class="progress-step" id="step2">Carga de Archivos</div>
+    <div class="progress-step" id="step3">Fin</div>
+</div>
+<!-- Paso 1 -->
+ 
+  <form method="POST" action="{% url 'completardatos_cliente' %}">
+    {% csrf_token %}
+    <input type="hidden" name="hdd_codcli" value="{{ codcli }}">
+   
+    
+<div class="paso" id="paso1">
+    <!--<h3>Paso 1: Información General</h3>-->
+    <div class="form-grid"> 
+        <p class="label" style="width:12%">RIF*: </p> 
+        <p class="label" style="width:25%">Razón Social*: </p> 
+        <p class="label" style="width:10%">Fecha*: </p>
+        <!--<p class="label" style="width:15%">Tipo de Cliente*: </p>-->
+        <p class="label" style="width:15%">Tipo de Cartera*: </p>
+        <p class="label" style="width:15%">Segmento*: </p> 
+        
+    </div>
+    <div class="form-grid"> 
+        <!--<input id="idrif" type="text" style="width:10%" placeholder="Ingrese RIF" value="{{ tipo_rif }}{{ rif }}" disabled> -->
+        <input id="nrorif" name ="nrorif" type="text" style="width:12%" placeholder="Ingrese RIF" value="{{ valrif }}" disabled>
+
+        <input id="razsoc" type="text" style="width:25%" placeholder="Ingrese razón social" value="{{ razsc }}" disabled>
+        <input id="fech" type="text" style="width:10%" value="{{ fecha }}"disabled>
+       <!-- <select id="cmbtipcli" style="width:15%; height: 75%;"  >
+            <option value="" selected>Seleccione</option>
+             <option value="1" selected>1</option>
+              <option value="2" selected>2</option>
+        </select>-->
+        <select id="cmbtipcart" name="cmbtipcart"  style="width:15%; height: 75%;" >
+            <option value="" selected>Seleccione</option>
+             <option value="A" selected>A</option>
+              <option value="B" selected>B</option>
+        </select>
+        <input id="segto" type="text" style="width:15%" placeholder="Ingrese Segmento" value=""> 
+       
+     </div><br>
+     <div class="form-grid"> 
+        <p class="label" style="width:10%">Experto*: </p> 
+        <p class="label" style="width:25%">Dirección*: </p> 
+        <p class="label" style="width:14%">Región*: </p>
+        <p class="label" style="width:15%">Estado*: </p>
+        <p class="label" style="width:15%">Ciudad*: </p>
+        <p class="label" style="width:15%">Municipio*: </p>
+         
+      
+    </div>
+    <div class="form-grid"> 
+        <input id ="expto" type="text" style="width:10%" placeholder="Ingrese Experto" value=""> 
+        <input id="direcc" type="text" style="width:25%" value="{{ direccion}}" placeholder="Ingrese Dirección" >
+        <select id="cmbregion" name="cmbregion" style="width:14%; height: 75%;" onchange="" >
+            <option value="" selected>Seleccione</option>
+        </select>
+
+
+
+         <select id="cmbstate" name="cmbstate" style="width:15%; height: 75%;" >
+            <option value="" selected>Seleccione</option>
+        </select>
+        <select id="cmbciud" name="cmbciud" style="width:15%; height: 75%;" >
+            <option value="" selected>Seleccione</option>
+        </select>
+        <select id="cmbmcpo" name="cmbmcpo" style="width:15%; height: 75%;" >
+            <option value="" selected>Seleccione</option>
+        </select>
+       
+        
+     </div><br>
+     <div class="form-grid"> 
+        <p class="label" style="width:15%">Parroquia*: </p>
+        <p class="label" style="width:15%">Urbanización*:</p> 
+        <p class="label" style="width:15%">Rep. Legal*: </p> 
+        <p class="label" style="width:10%">Tlf RL*: </p>
+        <p class="label" style="width:18%">Email RL*: </p>
+        <!--<p class="label" style="width:18%">Administrador*: </p>-->
+      
+    </div>
+
+    <div class="form-grid"> 
+         <select id="cmbpquia"  name="cmbpquia" style="width:15%; height: 75%;" >
+            <option value="" selected>Seleccione</option>
+        </select>
+        <select id="cmburb"  name="cmburb"  style="width:15%; height: 75%;" >
+            <option value="" selected>Seleccione</option>
+        </select>
+        <input id="rep_legal" type="text" style="width:15%" placeholder="Ingrese representante" value=""> 
+        <input id="tlf_rl" type="text" style="width:10%" placeholder="Ingrese Teléfono RL" value=""> 
+        <input id="email_rl" type="text" style="width:18%" placeholder="Ingrese Email RL" value=""> 
+        <!--<input id="adm" type="text" style="width:18%" placeholder="Ingrese Administrador" value="">-->
+      
+        
+     </div><br>
+
+     <div class="form-grid"> 
+        <!--  <p class="label" style="width:18%">Teléfono A*: </p>
+        <p class="label" style="width:18%">Email A*: </p>-->
+        <p class="label" style="width:25%">Observaciones*: </p>
+    </div>
+     <div class="form-grid"> 
+      <!--   <input id="tlf_a" type="text" style="width:18%" placeholder="Teléfono A" value=""> 
+        <input id="email_a" type="text" style="width:18%" placeholder="Ingrese Email A" value=""> -->
+        
+        <input id="obs" name="obs" type="text" style="width:30%" placeholder="Ingrese Observaciones" value="{{ obs }}"> 
+     </div> 
+   
+   
+</div>  
+        
+      <!--  <button type="button" id="btnpaso1" onclick="validarPaso('datacli')" style="width:10%; float: right;">Siguiente</button>
+        -->
+
+     
+</form> 
+<!-- Paso 2 -->
+<div class="paso" id="paso2">
+   <h3 class="label">
+Documentos digitales (Formato PDF Digitalizado)
+  </h3>
+    <br>
+    <div class="arch">
+
+    <form action="{% url 'adjuntar_archivos' %}" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+   
+  <input type="hidden" name="hdd_namefile" value="{{ name_file }}">
+<div class="campo">
+  <label for="doc_ci">Cédula *:</label>
+  <input type="file" id="doc_ci" name="doc_ci" accept="application/pdf" required
+         style="border: none; outline: none; background: transparent; height: 15%;">
+ {% if archivos.cedula %}
+  <div class="archivo-item">
+    <span class="archivo-nombre">📄 {{ archivos.cedula.nombre }}</span>
+    <a href="{{ archivos.cedula.url }}" target="_blank" class="icono" title="Ver documento">
+      <i class="fas fa-eye"></i>
+    </a>
+    <a href="{{ archivos.cedula.url }}" download class="icono" title="Descargar">
+      <i class="fas fa-download"></i>
+    </a>
+  </div>
+{% endif %}
+</div>
+
+    <div class="campo">
+        <label for="doc_reg_mercantil">Reg. Mercantil *:</label>
+        <input type="file" id="doc_reg_mercantil" name="doc_reg_mercantil" accept="application/pdf" required
+              style="border: none; outline: none; background: transparent; height: 15%;">
+        {% if archivos.reg_mercantil %}
+          <div class="archivo-item">
+              <span class="archivo-nombre">📄 {{ archivos.reg_mercantil.nombre }}</span>
+              <a href="{{ archivos.reg_mercantil.url }}" target="_blank" class="icono" title="Ver documento">
+                <i class="fas fa-eye"></i>
+              </a>
+              <a href="{{ archivos.reg_mercantil.url }}" download class="icono" title="Descargar">
+                <i class="fas fa-download"></i>
+              </a>
+          </div>
+        {% endif %}
+    </div>
+
+
+<div style="display: flex; justify-content: center; margin-top: 20px;">
+  <button type="submit" class="boton-centrado">Cargar Archivos</button>
+</div>
+<br>
+
+  {% if messages %}
+  <div class="mensaje-container">
+    {% for message in messages %}
+      <div class="mensaje {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+</form>
+
+
+
+    </div>
+  <!--
+    <div class="alerta" style="text-align: right;">
+        <button id="btnSiguiente" onclick="anteriorPaso(2)">Anterior</button>
+        <button id="btndoc" onclick="siguientePaso(2); validarPaso(datadoc)">Siguiente</button>
+    </div>-->
+</div>
+<div class="alerta" style="text-align: right;">
+  <button type="button" id="btnAnteriorGeneral" onclick="retrocederPaso()">Anterior</button>
+  <button type="button" id="btnSiguienteGeneral" onclick="ejecutarPaso()">Siguiente</button>
+</div>
+
+<!-- Paso 3 -->
+<div class="paso" id="paso3">
+    <h3>Paso 3: Finalización</h3>
+    <div class="form-grid">
+        <p>¡Registro completado!</p>
+    </div>
+    <div class="alerta" style="text-align: center;">
+    <!--<button id="btnSiguiente" style="margin-top: 20px; padding: 10px 20px;  border-radius: 5px; cursor: pointer;" onclick="anteriorPaso(3)">Anterior</button>-->
+    <button  type="submit" style="margin-top: 20px; padding: 10px 20px;  border-radius: 5px; cursor: pointer;" onclick="register()">Crear Solicitud</button>
+    <button  type="submit" style="margin-top: 20px; padding: 10px 20px;  border-radius: 5px; cursor: pointer;" onclick="register()">Salir</button>
+    </div>
+</div>
+
+
+<div id="alertaModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-banner">
+            <h2>Alerta</h2>
+        </div>
+        <p>El cliente con Rif 1234 se registró correctamente.</p>
+        <p class="pregunta">¿Desea cargar una solicitud?</p>
+        <div class="botones">
+            <button onclick="cargarSolicitud()">Sí</button>
+            <button onclick="cerrarModal()">No</button>
+        </div>
+    </div>
+</div>
+<div id="modalAlerta" class="modal-campo">
+  <div class="modal-contenido">
+    <p>⚠️ Por favor, completa todos los campos obligatorios.</p>
+    <button onclick="cerrarModalAlerta()" class="btn-ok">OK</button>
+  </div>
+</div>
+
+<div id="modalArchivo" class="modal-campo">
+  <div class="modal-contenido">
+    <p>⚠️ Para continuar al siguiente paso, debes cargar todos los documentos requeridos.</p>
+    <div style="text-align: center; margin-top: 15px;">
+      <button onclick="cerrarModalArchivo()" class="btn-ok">Ok, entendido</button>
+      <a href="/" class="btn-ir-inicio">Ir al inicio</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- Estilos para ocultar los pasos -->
+<style>
+   .boton-centrado {
+    width: 130px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+    .arch {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Espaciado entre los campos */
+    }
+
+    .campo {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Espacio entre etiqueta e input */
+    }
+
+   
+
+    input[type="file"] {
+        flex: 1;
+    }
+    .paso { display: none; }
+    .paso.activo { display: block; }
+    
+    .progress-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+    
+    .progress-step {
+        flex: 1;
+        text-align: center;
+        padding: 5px;
+        background: #DDD;
+        border-radius: 5px;
+        margin: 0 5px;
+        transition: background 0.3s, opacity 0.3s;
+        opacity: 0.5; /* Desvanece los pasos no activos */
+    }
+    
+    .progress-step.active {
+        background: #2DC9D1;
+        color: white;
+        opacity: 1; /* Restaura el paso activo */
+    }
+ 
+ 
+.modal-campo {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-contenido {
+  background-color:rgb(116, 118, 120);
+  color: white;
+  padding: 25px 40px;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+
+.btn-ok {
+  margin-top: 20px;
+  background-color: white;
+  color: #783CBC;
+  padding: 8px 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+ 
+.campo-invalido {
+  border: 2px solid red !important;
+  box-shadow: 0 0 4px red;
+}
+
+  .documentos-cargados ul {
+  list-style: none;
+  padding-left: 0;
+}
+.documentos-cargados li {
+  margin-bottom: 8px;
+}
+.documentos-cargados a {
+  text-decoration: none;
+  color: #007bff;
+}
+.documentos-cargados a:hover {
+  text-decoration: underline;
+}
+.archivo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.archivo-nombre {
+  min-width: 180px;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icono {
+  font-size: 1.1rem;
+  color: #4b75c4;
+  opacity: 0.7;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  text-decoration: none;
+}
+
+.icono:hover {
+  opacity: 1;
+  transform: scale(1.2);
+  color: #1848a5;
+}
+
+.mensaje-container {
+  margin-bottom: 15px;
+}
+
+.mensaje {
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.mensaje.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.mensaje.success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+/*modal de los documentos*/
+.btn-ok, .btn-ir-inicio {
+  padding: 8px 16px;
+  margin: 0 8px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  color: #333;
+}
+
+.btn-ir-inicio:hover {
+  background-color: #f4f4f4;
+}
+
+
+
+</style>
+
+{% load static %}
+<script src="{% static 'js/cargacombo.js' %}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script>
+ 
+  // Modal de archivos incompletos
+  function mostrarModalArchivoIncompleto() {
+    document.getElementById("modalArchivo").style.display = "flex";
+  }
+
+  function cerrarModalArchivo() {
+    document.getElementById("modalArchivo").style.display = "none";
+  }
+
+  window.datosCliente = {
+    idregion: "{{ idregion|default:''|escapejs }}",
+    idstate: "{{ idstate|default:''|escapejs }}",
+    idciudad: "{{ idciudad|default:''|escapejs }}",
+    existe: "{{ valor|default:'0' }}" === "1"
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    let pasoActual = parseInt(document.getElementById("hdd_paso")?.value || 1);
+
+    function actualizarPaso(paso) {
+      pasoActual = paso;
+      document.querySelectorAll(".progress-step").forEach((el, index) => {
+        el.classList.toggle("active", index + 1 === paso);
+      });
+    }
+
+    function mostrarPaso(pasoNuevo) {
+      document.querySelectorAll(".paso").forEach(p => p.classList.remove("activo"));
+      const pasoDiv = document.getElementById(`paso${pasoNuevo}`);
+      if (pasoDiv) pasoDiv.classList.add("activo");
+      actualizarPaso(pasoNuevo);
+    }
+
+    function siguientePaso() {
+      if (pasoActual < 3) mostrarPaso(pasoActual + 1);
+    }
+
+    function retrocederPaso() {
+      if (pasoActual > 1) mostrarPaso(pasoActual - 1);
+    }
+
+    function validarPaso(valor) {
+      if (valor === "datacli") {
+        const campos = ["cmbregion", "obs"];
+        let valido = true;
+
+        campos.forEach(id => {
+          const campo = document.getElementById(id);
+          const esSelect = campo?.tagName === "SELECT";
+          const vacio = esSelect ? campo.value === "" : !campo.value.trim();
+          campo?.classList.remove("campo-invalido");
+          if (vacio) {
+            campo?.classList.add("campo-invalido");
+            campo?.focus();
+            valido = false;
+          }
+        });
+
+        if (!valido) {
+          mostrarModalAlerta();
+          return;
+        }
+
+        const form = document.querySelector("form");
+        const data = new FormData(form);
+
+        fetch("{% url 'completardatos_cliente' %}", {
+          method: "POST",
+          headers: { "X-CSRFToken": getCookie("csrftoken") },
+          body: data
+        }).then(res => {
+          if (res.ok) siguientePaso();
+        });
+
+      } else if (valor === "datadoc") {
+        const docCI = document.getElementById("doc_ci");
+        const docReg = document.getElementById("doc_reg_mercantil");
+
+        const archivosCargados =
+          (docCI && docCI.files.length > 0) &&
+          (docReg && docReg.files.length > 0);
+
+        if (!archivosCargados) {
+          mostrarModalArchivoIncompleto();
+          return;
+        }
+
+        siguientePaso();
+      }
+    }
+
+    window.retrocederPaso = retrocederPaso;
+
+    window.ejecutarPaso = () => {
+      if (pasoActual === 1) {
+        validarPaso("datacli");
+      } else if (pasoActual === 2) {
+        validarPaso("datadoc");
+      }
+    };
+
+    mostrarPaso(pasoActual);
+  });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  function mostrarModalAlerta() {
+    document.getElementById("modalAlerta").style.display = "flex";
+  }
+
+  function cerrarModalAlerta() {
+    document.getElementById("modalAlerta").style.display = "none";
+  }
+</script>
+
+{% endblock %}

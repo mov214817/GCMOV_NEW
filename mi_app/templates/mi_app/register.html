@@ -1,0 +1,14 @@
+<form action="{% url 'register' %}" method="POST">
+    {% csrf_token %}
+    
+    <label for="username">Nombre de Usuario:</label>
+    <input type="text" name="username" required>
+
+    <label for="password">Contraseña:</label>
+    <input type="password" name="password" required>
+
+    <label for="is_admin">¿Es Administrador?</label>
+    <input type="checkbox" name="is_admin">
+
+    <button type="submit">Registrar Usuario</button>
+</form>

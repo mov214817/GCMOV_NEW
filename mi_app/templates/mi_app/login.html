@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Movilnet Pymes</title>
+    <style>
+        body {
+            background-color:rgb(183, 225, 233); /* Azul turquesa */
+            color: white;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 400px;
+            background-color:rgb(159, 133, 189); /* Fondo */
+            padding: 0; /* Sin margen interno para incluir el banner */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .banner {
+            background-color: #783CBC; 
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-top-left-radius: 10px; /* Borde redondeado superior */
+            border-top-right-radius: 10px; /* Borde redondeado superior */
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+        }
+ 
+        /* Cambia el borde cuando el campo está enfocado */
+        .form-group.input-group input:focus {
+            border: 1px solid #fc1515 !important; /* Usa !important para forzar el cambio */
+            outline: none; /* Elimina el contorno azul */
+            box-shadow: none; /* Elimina cualquier efecto adicional */
+        }
+
+        .btn-primary {
+            background-color: #783CBC; /* Morado  */
+            border-color: #783CBC;
+            display: block; /* Para que ocupe toda la línea y se pueda centrar */
+            width: auto; /* Ajusta el ancho al contenido */
+            padding: 5px 30px; /* Modifica el espacio interno */
+            text-align: center; /* Asegura que el texto esté centrado */
+            margin: 0 auto; /* Centra horizontalmente */
+        }
+        .btn-primary:hover {
+            background-color: #2DC9D1;
+            border-color: #2DC9D1;
+        }
+        /* Cambia el color del enlace */
+        a[href="{% url 'register' %}"] {
+
+            color: #292cd0; /* Puedes cambiar 'blue' por cualquier otro color */
+            text-decoration: none;
+        }
+
+        /* Cambia el color cuando el usuario pasa el cursor */
+        a[href="{% url 'register' %}"] {
+
+            color: #292cd0; /* Cambia 'red' por el color que desees */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Banner dentro del cuadro -->
+        <div class="banner"></div>
+
+        <!-- Contenido del formulario -->
+        <div class="content">
+            <h2 class="text-center">Iniciar Sesión</h2>
+            <form method="POST" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Nombre de Usuario" required>
+                </div>
+                <div class="form-group input-group mt-2">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
+                </div>
+                {% if error %}
+                    <p style="color:rgb(219, 63, 63);">{{ error }}</p>
+                {% endif %}
+                <button type="submit" class="btn btn-primary btn-block mt-3">Iniciar Sesión</button>
+            </form>
+            {% if request.user.is_authenticated and request.user.is_admin %}
+            <p class="text-center mt-3">¿No tienes una cuenta? <a href="{% url 'register' %}">Regístrate aquí</a></p>
+            {% endif %}
+        </div>
+        
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</body>
+</html>

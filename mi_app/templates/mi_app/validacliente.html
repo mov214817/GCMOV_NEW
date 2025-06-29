@@ -1,0 +1,165 @@
+{% extends "mi_app/menu.html" %}
+{% load static %}
+{% block title %}Movilnet Pymes{% endblock %}
+
+{% block content %}
+<div class="centro-contenedor">
+    <div class="cliente-cuadro">
+        <h2>Cliente</h2>
+
+        <form action="{% url 'validar_cliente' %}" method="POST">
+            {% csrf_token %}
+<div class="form-grid " > 
+    <div style="gap: 5px; width: 100%;">
+        <select id="tiporif" name="tiporif" style="width:18%; height: 59%; align: center;"  required>
+            <option value="">Tipo</option>
+            <option value="V" {% if request.POST.tiporif == "V" %}selected{% endif %}>V</option>
+            <option value="J" {% if request.POST.tiporif == "J" %}selected{% endif %}>J</option>
+            <option value="P" {% if request.POST.tiporif == "P" %}selected{% endif %}>P</option>
+            <option value="G" {% if request.POST.tiporif == "G" %}selected{% endif %}>G</option>
+            <option value="I" {% if request.POST.tiporif == "I" %}selected{% endif %}>I</option>
+        </select>
+       <!-- <input id="rif"  name="rif"  type="text" style="width:50%; align: center;" placeholder="Ingrese RIF"  required> 
+        <input id="rif" name="rif" type="text" style="width:36%; height: 60%; align: center;"placeholder="Ingrese RIF"value="{{ request.POST.rif }}" required oninput="this.value = this.value.replace(/[^0-9]/g, '');" />-->
+        <input id="rif" name="rif" type="text" style="width:36%; height: 60%; align: center;" placeholder="Ingrese RIF" value="{{ request.POST.rif }}" required  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);"   maxlength="10" />
+
+        <!--<button type="submit" class="btn-send">Aceptar</button>-->
+        <button type="submit" class="{% if valor %}{% endif %}" style="width:15%;">send</button>
+    </div>
+    
+</div>
+               
+        </form><br>
+
+        {% if valor %}
+       <!-- <p style="color: black; font-size: 20px; text-align: center;">{{ valrif }}</p>-->
+        <!--<p style="color: red; margin-top: 20px;" id="msjerror">Rif no existe. ¿Desea registrarlo?</p>-->
+         <p style="color: red; margin-top: 20px; font-weight: bold;" id="msjerror">Rif no existe. ¿Desea registrarlo?</p>
+        {% endif %}
+
+        {% if error_rif %}
+  <p style="color: red; margin-top: 20px; font-weight: bold;" id="msjerrorpp">
+    Error: El RIF del documento no coincide con el ingresado.
+  </p>
+{% endif %}
+
+        {% if mostrar_botones %}
+        <div class="alerta">
+          
+            <!--<input type="hidden" name="hddtipcli" value="{{ tipo_rif }}">
+            <input type="hidden" name="hdd_rif" value="{{ rif }}">-->
+            <button type="button" id="btnSi" name="btnSi" style="margin: 5px;" onclick="validate_register('Y');">Sí</button> 
+            <button type="button" id="btnNo" name="btnNo" style="margin: 5px;"  onclick="validate_register('N');">No</button>
+            
+     
+        <!-- ✅ Campo para subir archivo PDF (oculto por defecto) -->
+        <div id="subirDocumento" style="display: none; margin-top: 10px;">
+            <h2>Documento (RIF):</h2>
+            <a href="#" id="uploadLink" class="no-underline">
+                <img src="{% static 'icons/upload-icon.png' %}" alt="Subir Documento" style="width: 20px; height: 20px;">
+                <span>Subir documento</span>
+            </a>
+
+            <!-- {% if error %}
+            <p style="color: red; font-size: 16px;">{{ error }}</p>
+            {% endif %}
+-->
+        </div>
+       
+         <form action="{% url 'registrar_cliente' %}" method="POST" enctype="multipart/form-data" style="display: inline;">
+            {% csrf_token %}
+    <input type="hidden" name="hddtipcli" value="{{ tipo_rif }}">
+    <input type="hidden" name="hdd_rif" value="{{ rif }}">
+     <input type="file" id="documento_rif" name="documento_rif" accept="application/pdf" style="display: none;" required>
+    <button  type="submit" id="btnacept" style="margin-top: 20px; padding: 10px 20px;  border-radius: 5px; cursor: pointer;" class="{% if valor %}oculto{% endif %}">Aceptar</button>
+</form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.no-underline {
+  text-decoration: none;
+  color:rgb(52, 81, 212);
+}
+
+.btn-send {
+    height: 65%;
+    background-color: #783CBC;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-send:hover {
+    background-color: #2DC9D1;
+}
+
+
+</style>    
+<script>
+ 
+document.addEventListener("DOMContentLoaded", function () {
+    const urlCliente = "{% url 'cliente' %}";
+
+    const uploadLink = document.getElementById("uploadLink");
+    const documentoInput = document.getElementById("documento_rif");
+    const aceptarBtn = document.getElementById("btnacept");
+
+    if (uploadLink && documentoInput) {
+        uploadLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            documentoInput.click();
+        });
+
+        documentoInput.addEventListener("change", function () {
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                uploadLink.innerHTML = `<img src="{% static 'icons/upload-icon.png' %}" alt="Subir Documento" style="width: 20px; height: 20px;">
+                                        <span>${fileName}</span>`;
+            }
+        });
+    }
+
+    if (aceptarBtn && documentoInput) {
+        aceptarBtn.addEventListener("click", function (event) {
+            const documento = documentoInput.files[0];
+            const rifInput = document.getElementById("rif").value;
+
+            if (!documento) {
+                alert("Debe adjuntar un archivo RIF con formato PDF.");
+                event.preventDefault();
+                return;
+            }
+
+            if (!rifInput || rifInput.length < 9) {
+                alert("Ingrese un número de RIF válido antes de continuar.");
+                event.preventDefault();
+                return;
+            }
+        });
+    }
+
+    window.validate_register = function (valor) {
+        if (valor === "Y") {
+            const subirDoc = document.getElementById("subirDocumento");
+            const btnSi = document.getElementById("btnSi");
+            const btnNo = document.getElementById("btnNo");
+            const btnAceptar = document.getElementById("btnacept");
+
+            if (subirDoc) subirDoc.style.display = "block";
+            if (btnSi) btnSi.style.display = "none";
+            if (btnNo) btnNo.style.display = "none";
+            if (btnAceptar) btnAceptar.style.display = "inline";
+        } else {
+            window.location.href = urlCliente;
+        }
+    };
+});
+ 
+
+</script>
+{% endblock %}

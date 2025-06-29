@@ -1,0 +1,33 @@
+{% extends "mi_app/menu.html" %}
+
+{% block title %}Lista de Usuarios{% endblock %}
+
+{% block content %}
+<h2>Lista de Usuarios</h2>
+
+{% if request.user.is_admin %}
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.id }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>
+                <a href="{% url 'editar_usuario' usuario.id %}">Editar</a>
+                <a href="{% url 'eliminar_usuario' usuario.id %}" onclick="return confirm('¿Eliminar usuario?')">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No tienes permiso para ver esta página.</p>
+{% endif %}
+{% endblock %}

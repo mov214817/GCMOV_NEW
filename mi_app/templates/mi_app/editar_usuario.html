@@ -1,0 +1,18 @@
+{% extends "mi_app/menu.html" %}
+
+{% block title %}Editar Usuario{% endblock %}
+
+{% block content %}
+<h2>Editar Usuario</h2>
+
+<form action="{% url 'editar_usuario' usuario.id %}" method="POST">
+    {% csrf_token %}
+    <label for="username">Nuevo Nombre de Usuario:</label>
+    <input type="text" name="username" value="{{ usuario.username }}" required>
+
+    <label for="password">Nueva Contraseña (opcional):</label>
+    <input type="password" name="password">
+
+    <button type="submit">Actualizar Usuario</button>
+</form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "mi_app/base.html" %}
+
+{% block title %}Gestión de Usuarios{% endblock %}
+
+{% block content %}
+<h2>Administrar Usuarios</h2>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Usuario</th>
+        <th>Rol</th>
+        <th>Acciones</th>
+    </tr>
+    {% for usuario in usuarios %}
+    <tr>
+        <td>{{ usuario.id }}</td>
+        <td>{{ usuario.username }}</td>
+        <td>{{ usuario.perfil.rol }}</td>
+        <td>
+            <a href="{% url 'editar_usuario' usuario.id %}">Editar</a>
+            <a href="{% url 'eliminar_usuario' usuario.id %}" onclick="return confirm('¿Seguro que quieres eliminar este usuario?')">Eliminar</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'crear_usuario' %}">Crear nuevo usuario</a>
+
+{% endblock %}
